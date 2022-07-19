@@ -5,13 +5,16 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-file(GLOB OBJECTS "*.cxx" "*.ixx")
+file(GLOB OBJECTS "*.cpp" "*.cxx" "*.ixx")
+# exclude main.cpp
+list(FILTER OBJECTS EXCLUDE REGEX ".*main.cpp$")
+
 set(MODULES ${OBJECTS})
 set(PREBUILD_MODULES_PATH
     ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/modules_lib.dir)
 list(TRANSFORM OBJECTS REPLACE ".*/" "/")
 list(TRANSFORM OBJECTS PREPEND ${PREBUILD_MODULES_PATH})
-list(TRANSFORM OBJECTS REPLACE ".(cxx|ixx)$" ".o")
+list(TRANSFORM OBJECTS REPLACE ".(cxx|ixx|cpp)$" ".o")
 
 file(MAKE_DIRECTORY ${PREBUILD_MODULES_PATH})
 add_custom_target(
@@ -27,21 +30,10 @@ add_custom_target(
   DEPENDS modules_1
   WORKING_DIRECTORY ${PREBUILD_MODULES_PATH})
 
-# compile modules ...
-add_custom_target(
-  modules ALL
-  COMMAND ${CMAKE_CXX_COMPILER} -std=c++20 -fmodules-ts -fprebuilt-module-path=${PREBUILD_MODULES_PATH} -c ${MODULES}
-  SOURCES ${MODULES}
-  BYPRODUCTS ${OBJECTS}
-  DEPENDS modules_2
-  WORKING_DIRECTORY ${PREBUILD_MODULES_PATH})
-
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/lib.cpp "")
-add_library(modules_lib OBJECT ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/lib.cpp)
+add_library(modules_lib OBJECT ${MODULES})
 target_compile_features(modules_lib PRIVATE cxx_std_20)
 target_compile_options(modules_lib PRIVATE -fmodules-ts -fprebuilt-module-path=${PREBUILD_MODULES_PATH})
-target_link_libraries(modules_lib PRIVATE ${OBJECTS})
-add_dependencies(modules_lib modules)
+add_dependencies(modules_lib modules_2)
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
