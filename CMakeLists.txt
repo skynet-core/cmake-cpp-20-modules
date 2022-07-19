@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(playground)
-
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CPP_STD_MODULES
     "iostream"
     CACHE STRING "std_modules")
