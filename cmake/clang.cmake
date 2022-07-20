@@ -1,41 +1,32 @@
-# add_custom_target( std_modules ALL COMMAND ${CMAKE_CXX_COMPILER} -c -std=c++20
-# -fmodules-ts -x c++-system-header ${CPP_STD_MODULES} )
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-
-file(GLOB OBJECTS "*.cpp" "*.cxx" "*.ixx")
-# exclude main.cpp
-list(FILTER OBJECTS EXCLUDE REGEX ".*main.cpp$")
-
-set(MODULES ${OBJECTS})
-set(PREBUILD_MODULES_PATH
-    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/modules_lib.dir)
-list(TRANSFORM OBJECTS REPLACE ".*/" "/")
-list(TRANSFORM OBJECTS PREPEND ${PREBUILD_MODULES_PATH})
-list(TRANSFORM OBJECTS REPLACE ".(cxx|ixx|cpp)$" ".o")
-
-file(MAKE_DIRECTORY ${PREBUILD_MODULES_PATH})
-add_custom_target(
-  modules_1 ALL
-  COMMAND ${CMAKE_CXX_COMPILER} -std=c++20 -fmodules-ts -Xclang
-          -emit-module-interface -c ${MODULES}
-  SOURCES ${MODULES}
-  WORKING_DIRECTORY ${PREBUILD_MODULES_PATH})
-
-add_custom_target(
-  modules_2 ALL
-  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/rename.cmake
-  DEPENDS modules_1
-  WORKING_DIRECTORY ${PREBUILD_MODULES_PATH})
-
-add_library(modules_lib OBJECT ${MODULES})
-target_compile_features(modules_lib PRIVATE cxx_std_20)
-target_compile_options(modules_lib PRIVATE -fmodules-ts -fprebuilt-module-path=${PREBUILD_MODULES_PATH})
-add_dependencies(modules_lib modules_2)
-
 add_executable(${PROJECT_NAME} main.cpp)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
-target_compile_options(${PROJECT_NAME} PRIVATE -fmodules-ts -fprebuilt-module-path=${PREBUILD_MODULES_PATH})
-target_link_libraries(${PROJECT_NAME} PRIVATE modules_lib)
+target_compile_options(
+  ${PROJECT_NAME} PRIVATE -fmodules-ts
+                          -fprebuilt-module-path=${PREBUILD_MODULES_PATH})
+
+if(${LEN_MOD_SOURCES} GREATER 0)
+  set(MODULES ${MOD_SOURCES})
+
+  add_custom_target(
+    modules_1 ALL
+    COMMAND ${CMAKE_CXX_COMPILER} -std=c++20 -fmodules-ts -Xclang
+            -emit-module-interface -c ${MODULES}
+    SOURCES ${MODULES}
+    WORKING_DIRECTORY ${PREBUILD_MODULES_PATH})
+
+  add_custom_target(
+    modules_2 ALL
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/rename.cmake
+    DEPENDS modules_1
+    WORKING_DIRECTORY ${PREBUILD_MODULES_PATH})
+
+  add_library(${MODULES_LIB} OBJECT ${MODULES})
+  target_compile_features(${MODULES_LIB} PRIVATE cxx_std_20)
+  target_compile_options(
+    ${MODULES_LIB} PRIVATE -fmodules-ts
+                        -fprebuilt-module-path=${PREBUILD_MODULES_PATH})
+  add_dependencies(${MODULES_LIB} modules_2)
+
+  target_link_libraries(${PROJECT_NAME} PRIVATE ${MODULES_LIB})
+
+endif()
