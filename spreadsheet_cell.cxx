@@ -15,7 +15,6 @@ export class SpreadsheetCell{
 
 module :private;
 
-
 void SpreadsheetCell::setValue(double value) {
   std::cout << "SetValue:" << value << std::endl;
   m_value = value;

@@ -1,7 +1,9 @@
-import spreadsheet_cell;
+// import spreadsheet_cell;
+// import root_mod;
+import root;
 
 int main() {
-  SpreadsheetCell cell{};
-  cell.setValue(30.0);
+  RootClass cell{};
+  cell.Greetings();
   return 0;
 }

@@ -15,7 +15,7 @@ set(MODULES_LIB
     "modules_lib"
     CACHE STRING "modules_lib")
 
-file(GLOB MOD_SOURCES "*.cpp" "*.cxx" "*.ixx" "*.cppm")
+file(GLOB MOD_SOURCES "*.cpp" "*.cxx" "*.cppm")
 # exclude main.cpp
 list(FILTER MOD_SOURCES EXCLUDE REGEX ".*main.cpp$")
 list(LENGTH MOD_SOURCES LEN_MOD_SOURCES)
