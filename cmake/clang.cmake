@@ -20,7 +20,7 @@ if(${LEN_MOD_SOURCES} GREATER 0)
     DEPENDS modules_1
     WORKING_DIRECTORY ${PREBUILD_MODULES_PATH})
 
-  add_library(${MODULES_LIB} OBJECT ${MODULES})
+  add_library(${MODULES_LIB} OBJECTS ${MODULES})
   target_compile_features(${MODULES_LIB} PRIVATE cxx_std_20)
   target_compile_options(
     ${MODULES_LIB} PRIVATE -fmodules-ts

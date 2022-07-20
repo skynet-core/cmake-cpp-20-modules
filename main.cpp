@@ -1,6 +1,7 @@
-import hello;
+import spreadsheet_cell;
 
 int main() {
-  hello_world();
+  SpreadsheetCell cell{};
+  cell.setValue(30.0);
   return 0;
 }
