@@ -12,20 +12,10 @@
 1. Clang does not have an option to pre-compile system headers like GCC does, so it is recommended to include headers
     in module section so it remain compatible with GCC.
 
+2. GCC fails to compile modules with dependencies on first iteration :(
+
 # TODO List:
 
 - [ ] MacOS support
 - [ ] Windows MSVC support
 - [ ] Windows MINGW support
-
-
-
-// clang++  -std=c++20 -fmodules -fimplicit-modules -fimplicit-module-maps -fprebuilt-module-path=. -x c++-module ./another.ixx -Xclang -emit-module-interface --precompile -o ./another.pcm
-
-// clang++  -std=c++20 -fmodules -fimplicit-modules -fimplicit-module-maps -fprebuilt-module-path=. -x c++-module ./root.ixx -Xclang -emit-module-interface --precompile -o ./root.pcm
-
-// clang++  -std=c++20 -fmodules -fimplicit-modules -fimplicit-module-maps -fprebuilt-module-path=. -fmodule-file=./root.pcm -c ./root.cpp
-
-// clang++  -std=c++20 -fmodules -fimplicit-modules -fimplicit-module-maps -fprebuilt-module-path=. -fmodule-file=./another.pcm -c ./another.cpp
-
-// clang++  -std=c++20 -fmodules -fimplicit-modules -fimplicit-module-maps -fprebuilt-module-path=. ./another.o ./root.o ./main.cpp -o main 

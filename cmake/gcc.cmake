@@ -7,10 +7,12 @@ endif()
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
-target_compile_options(${PROJECT_NAME} PRIVATE -fmodules-ts)
+target_compile_options(
+  ${PROJECT_NAME} PRIVATE -fmodules-ts -fno-module-lazy -flang-info-module-cmi
+                          -flang-info-include-translate)
 
 if(${LEN_MOD_SOURCES} GREATER 0)
-  add_library(${MODULES_LIB} OBJECT ${MOD_SOURCES})
+  add_library(${MODULES_LIB} SHARED ${MOD_SOURCES})
 
   target_compile_features(${MODULES_LIB} PRIVATE cxx_std_20)
   target_compile_options(
@@ -19,7 +21,6 @@ if(${LEN_MOD_SOURCES} GREATER 0)
   if(${NUM_STD_MODULES} GREATER 0)
     add_dependencies(${MODULES_LIB} std_modules)
   endif()
-  add_dependencies(${PROJECT_NAME} ${MODULES_LIB})
 
   target_link_libraries(${PROJECT_NAME} PRIVATE ${MODULES_LIB})
 
