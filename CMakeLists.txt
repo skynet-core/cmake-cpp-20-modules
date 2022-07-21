@@ -15,13 +15,12 @@ set(MODULES_LIB
     "modules_lib"
     CACHE STRING "modules_lib")
 
-file(GLOB MOD_SOURCES "*.cpp" "*.cxx" "*.ixx" "*.cppm")
+file(GLOB MOD_SOURCES "*.cpp" "*.cxx" "*.cppm")
 # exclude main.cpp
 list(FILTER MOD_SOURCES EXCLUDE REGEX ".*main.cpp$")
 list(LENGTH MOD_SOURCES LEN_MOD_SOURCES)
 
-set(PREBUILD_MODULES_PATH
-    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${MODULES_LIB}.dir)
+set(PREBUILD_MODULES_PATH ${CMAKE_CURRENT_BINARY_DIR}/modules)
 file(MAKE_DIRECTORY ${PREBUILD_MODULES_PATH})
 
 string(TOUPPER ${CMAKE_CXX_COMPILER_ID} CMAKE_CXX_COMPILER_ID)
